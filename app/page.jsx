@@ -45,7 +45,7 @@ export default function Home() {
             </div>
           </div>
           <div className="lg:col-span-5">
-            <Slot id="HERO-01" label="Hero product shot" note="Match ball / gloves / leather — studio" ratio="aspect-[4/5]" />
+            <Slot id="HERO-01" img="hero-01" label="Hero product shot" note="Match ball / gloves / leather — studio" ratio="aspect-[4/5]" />
           </div>
         </div>
       </section>
@@ -78,6 +78,7 @@ export default function Home() {
             <Link key={ind.slug} href={`/industries/${ind.slug}`} className="cat-tile group">
               <Slot
                 id={`CAT-0${i + 1}`}
+                img={`cat-${ind.slug}`}
                 label={ind.name}
                 ratio="aspect-[4/5]"
               />
@@ -95,7 +96,8 @@ export default function Home() {
           {rest.map((ind, i) => (
             <Link key={ind.slug} href={`/industries/${ind.slug}`} className="cat-tile group">
               <Slot
-                id={`CAT-0${i + 4 > 9 ? i + 4 : `${i + 4}`}`}
+                id={`CAT-${String(i + 4).padStart(2, "0")}`}
+                img={`cat-${ind.slug}`}
                 label={ind.name}
                 ratio="aspect-square"
               />
@@ -127,8 +129,8 @@ export default function Home() {
                 </p>
               </div>
               <div className="lg:col-span-7 grid grid-cols-2 gap-4">
-                <Slot id="CR-01" label="Hand-stitching" note="Sialkot" ratio="aspect-[4/5]" className="!bg-harbor" />
-                <Slot id="CR-02" label="Leather cutting" note="Sialkot" ratio="aspect-[4/5]" className="!bg-harbor mt-8" />
+                <Slot id="CR-01" img="cr-01" label="Hand-stitching" note="Sialkot" ratio="aspect-[4/5]" className="!bg-harbor" />
+                <Slot id="CR-02" img="cr-02" label="Leather cutting" note="Sialkot" ratio="aspect-[4/5]" className="!bg-harbor mt-8" />
               </div>
             </div>
           </Reveal>
