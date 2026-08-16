@@ -29,3 +29,10 @@ The filename decides where the image appears. Formats: .jpg .png .webp
 
 Upload the file → Vercel rebuilds → image is live in ~1 minute.
 Delete the file → the styled placeholder returns automatically.
+
+## Subcategory page images (new)
+Sports Goods: sub-soccer-balls · sub-baseball · sub-boxing-mma · sub-martial-arts · sub-cricket · sub-fitness-training
+Gloves: sub-goalkeeper-gloves · sub-sports-gloves · sub-motorcycle-gloves · sub-industrial-safety-gloves · sub-fashion-dress-gloves
+Leather: sub-leather-jackets · sub-small-leather-goods · sub-leather-bags · sub-leather-accessories
+
+Shape: 4:3 landscape (e.g. 1200x900). Optional — pages work without them.

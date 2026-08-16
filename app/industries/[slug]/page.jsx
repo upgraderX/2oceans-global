@@ -2,7 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import PageIntro from "@/components/PageIntro";
 import CloseCTA from "@/components/CloseCTA";
+import Slot from "@/components/Slot";
 import { INDUSTRIES, getIndustry } from "@/lib/industries";
+import { getSubcategories } from "@/lib/subcategories";
 
 export function generateStaticParams() {
   return INDUSTRIES.map((i) => ({ slug: i.slug }));
@@ -20,10 +22,33 @@ export function generateMetadata({ params }) {
 export default function IndustryPage({ params }) {
   const ind = getIndustry(params.slug);
   if (!ind) notFound();
+  const subs = getSubcategories(ind.slug);
 
   return (
     <>
       <PageIntro eyebrow={`Industries · ${ind.city}`} title={ind.name} lede={ind.intro} dark />
+
+      {subs.length > 0 && (
+        <section className="mx-auto max-w-site px-5 md:px-8 py-16 md:py-24">
+          <p className="eyebrow mb-8">Categories</p>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {subs.map((s, i) => (
+              <Link key={s.slug} href={`/industries/${ind.slug}/${s.slug}`} className="cat-tile group">
+                <Slot
+                  id={`SUB-${String(i + 1).padStart(2, "0")}`}
+                  img={`sub-${s.slug}`}
+                  label={s.name}
+                  ratio="aspect-[4/3]"
+                />
+                <p className="pt-4 font-display font-semibold uppercase text-lg group-hover:text-signal transition-colors">
+                  {s.name}
+                </p>
+                <p className="mt-1.5 text-sm text-deepwater/60 leading-relaxed">{s.blurb}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="mx-auto max-w-site px-5 md:px-8 py-16 md:py-24">
         <div className="grid gap-12 md:grid-cols-2">
