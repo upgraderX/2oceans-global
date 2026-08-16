@@ -8,7 +8,7 @@ import { useState } from "react";
  * If none exist, falls back to the styled placeholder.
  * No build-time filesystem checks — works on any host.
  */
-const EXTS = ["png", "jpg", "jpeg", "webp"];
+const EXTS = ["jpg", "png", "jpeg", "webp"];
 
 export default function Slot({ id, label, note, img, ratio = "aspect-[4/5]", className = "" }) {
   const [attempt, setAttempt] = useState(0);
