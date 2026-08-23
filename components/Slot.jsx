@@ -1,39 +1,40 @@
-import fs from "fs";
-import path from "path";
-import Image from "next/image";
+"use client";
 
-// Finds /public/images/{base}.{jpg|jpeg|png|webp} at build time.
-// Upload an image with the right name and it appears automatically.
-function findImage(base) {
-  if (!base) return null;
-  for (const ext of ["jpg", "jpeg", "png", "webp"]) {
-    const rel = `/images/${base}.${ext}`;
-    if (fs.existsSync(path.join(process.cwd(), "public", rel))) return rel;
-  }
-  return null;
-}
+import { useState } from "react";
+
+/*
+ * Image slot.
+ * Tries /images/{img}.png, then .jpg, then .jpeg, then .webp.
+ * If none exist, falls back to the styled placeholder.
+ * No build-time filesystem checks — works on any host.
+ */
+const EXTS = ["jpg", "png", "jpeg", "webp"];
 
 export default function Slot({ id, label, note, img, ratio = "aspect-[4/5]", className = "" }) {
-  const src = findImage(img);
+  const [attempt, setAttempt] = useState(0);
+  const failed = !img || attempt >= EXTS.length;
 
   return (
     <figure
       className={`cat-img relative ${ratio} w-full bg-slotbg overflow-hidden transition-colors duration-300 ${className}`}
     >
-      {src ? (
+      {!failed && (
         <>
-          <Image
-            src={src}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={`/${img}.${EXTS[attempt]}`}
             alt={label}
-            fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
-            className="object-cover"
+            loading="lazy"
+            onError={() => setAttempt((a) => a + 1)}
+            className="absolute inset-0 h-full w-full object-cover"
           />
           <span className="absolute top-3 left-3 font-mono text-[9px] tracking-[0.2em] bg-paper/90 text-deepwater px-2 py-1">
             {id}
           </span>
         </>
-      ) : (
+      )}
+
+      {failed && (
         <>
           <span className="absolute top-3.5 left-4 font-mono text-[10px] tracking-[0.22em] text-signal">
             {id}
