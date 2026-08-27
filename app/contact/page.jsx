@@ -3,8 +3,14 @@
 import { useState } from "react";
 import { INDUSTRIES } from "@/lib/industries";
 
+// Get this free at web3forms.com — enter the inbox you want quote requests
+// delivered to (no signup required) and copy the key it gives you.
+const WEB3FORMS_KEY = "906e0080-45c1-4097-b712-f480f24ede5e";
+
 const CONTACT_EMAIL = "info@2oceansglobal.com";
-const WHATSAPP_NUMBER = "";
+// WhatsApp click-to-chat — digits only, country code, no + or spaces.
+// e.g. Pakistan number 0300 1234567 -> "923001234567"
+const WHATSAPP_NUMBER = "923107085787";
 
 export default function ContactPage() {
   const [form, setForm] = useState({
@@ -16,28 +22,38 @@ export default function ContactPage() {
     company: "",
     email: "",
   });
-  const [sent, setSent] = useState(false);
+  const [status, setStatus] = useState("idle"); // idle | sending | sent | error
 
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
-    const subject = encodeURIComponent(
-      `Quote request — ${form.product || "New project"}`
-    );
-    const body = encodeURIComponent(
-      [
-        `INDUSTRY: ${form.industry}`,
-        `PRODUCT: ${form.product}`,
-        `QUANTITY: ${form.quantity}`,
-        `TIMELINE: ${form.timeline}`,
-        `NAME: ${form.name}`,
-        `COMPANY: ${form.company}`,
-        `EMAIL: ${form.email}`,
-      ].join("\n")
-    );
-    window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
-    setSent(true);
+    setStatus("sending");
+
+    try {
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_KEY,
+          subject: `Quote request — ${form.product || "New project"}`,
+          from_name: "2 Oceans Global — Website",
+          name: form.name,
+          email: form.email,
+          company: form.company,
+          industry: form.industry,
+          product: form.product,
+          quantity: form.quantity,
+          timeline: form.timeline,
+          message: `Industry: ${form.industry}\nProduct: ${form.product}\nQuantity: ${form.quantity}\nTimeline: ${form.timeline}\nCompany: ${form.company}`,
+        }),
+      });
+
+      const data = await res.json();
+      setStatus(data.success ? "sent" : "error");
+    } catch {
+      setStatus("error");
+    }
   };
 
   const field =
@@ -101,13 +117,22 @@ export default function ContactPage() {
               </div>
             </div>
 
-            <button type="submit" className="btn-primary mt-9 w-full sm:w-auto">
-              Send quote request
+            <button
+              type="submit"
+              disabled={status === "sending"}
+              className="btn-primary mt-9 w-full sm:w-auto disabled:opacity-60"
+            >
+              {status === "sending" ? "Sending..." : "Send quote request"}
             </button>
 
-            {sent && (
+            {status === "sent" && (
               <p className="mt-5 font-mono text-[11px] tracking-[0.18em] uppercase text-meridian">
-                Opening your email app — press send and we&rsquo;ll reply within one business day.
+                Request sent — we'll reply within one business day.
+              </p>
+            )}
+            {status === "error" && (
+              <p className="mt-5 font-mono text-[11px] tracking-[0.18em] uppercase text-signal">
+                Something went wrong — email us directly at {CONTACT_EMAIL}
               </p>
             )}
           </form>
@@ -124,22 +149,20 @@ export default function ContactPage() {
               </a>
             </div>
 
-            {WHATSAPP_NUMBER && (
-              <div className="border border-mist/40 rounded p-7">
-                <p className="eyebrow mb-3">WhatsApp</p>
-                <p className="text-sm text-deepwater/75 leading-relaxed">
-                  Fastest for quick questions and photos of your product.
-                </p>
-                <a
-                  href={`https://wa.me/${WHATSAPP_NUMBER}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-ghost-dark mt-5 inline-flex"
-                >
-                  Message us on WhatsApp
-                </a>
-              </div>
-            )}
+            <div className="border border-mist/40 rounded p-7">
+              <p className="eyebrow mb-3">WhatsApp</p>
+              <p className="text-sm text-deepwater/75 leading-relaxed">
+                Fastest for quick questions and photos of your product.
+              </p>
+              <a
+                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Hi — I'd like to ask about manufacturing with 2 Oceans Global.")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-ghost-dark mt-5 inline-flex"
+              >
+                Message us on WhatsApp
+              </a>
+            </div>
 
             <div className="bg-deepwater text-paper rounded p-7">
               <p className="eyebrow-light mb-3">Direct</p>
