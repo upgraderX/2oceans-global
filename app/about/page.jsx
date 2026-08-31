@@ -1,5 +1,6 @@
 import PageIntro from "@/components/PageIntro";
 import CloseCTA from "@/components/CloseCTA";
+import Slot from "@/components/Slot";
 
 export const metadata = {
   title: "About — 2 Oceans Global",
@@ -44,11 +45,12 @@ export default function AboutPage() {
             </div>
           </div>
           <div className="md:col-span-5">
-            <div className="flex items-center justify-center border border-dashed border-mist/50 rounded bg-deepwater/[0.03] py-24">
-              <p className="font-mono text-[11px] tracking-[0.22em] uppercase text-mist">
-                Awaiting asset — founder photograph
-              </p>
-            </div>
+            <Slot
+              id="FOUNDER"
+              img="founder-habib"
+              label="Habib ur Rehman Ali"
+              ratio="aspect-[4/5]"
+            />
             <div className="mt-8 border border-mist/40 rounded p-7">
               <p className="eyebrow mb-4">How we operate</p>
               <ul className="space-y-3 text-sm text-deepwater/80 leading-relaxed">
